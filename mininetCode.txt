@@ -1,0 +1,1 @@
+sudo mn --mac --topo=tree,3 --controller=remote,ip=10.15.3.12,port=6633 --switch ovs,protocols=OpenFlow13
