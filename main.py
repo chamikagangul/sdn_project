@@ -1,6 +1,8 @@
-# call a rest api
+from website import create_app
 
-import requests
+app = create_app()
 
-x = requests.get('https://w3schools.com')
-print(x.status_code)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',debug=True)
+
+    
