@@ -5,10 +5,9 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 
 
-apis = Blueprint('auth', __name__)
+apis = Blueprint('apis', __name__)
 
 
 @apis.route('/test')
-@login_required
 def testAPI():
     return "This is a test API."
