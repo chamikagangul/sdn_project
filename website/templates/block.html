@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block title %}Block IPs{% endblock %} {% block
+content %}
+<h1 align="center">BLOCK IP</h1>
+<!-- <ul class="list-group list-group-flush" id="notes">
+  {% for note in user.notes %}
+  <li class="list-group-item">
+    {{ note.data }}
+    <button type="button" class="close" onClick="deleteNote({{ note.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  {% endfor %}
+</ul> -->
+<form method="POST">
+  <label class="form-check-label" for="ip">Enter Host IP to be blocked</label>
+  <input type="text" name="ip" id="ip" class="form-control" placeholder="10.0.0.4/32"></input>
+  <br />
+  <div align="center">
+    <button type="submit" class="btn btn-primary">Add to Blacklist</button>
+  </div>
+</form>
+{% endblock %}
