@@ -1,27 +1,86 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+{% extends "base.html" %} {% block title %}Flow tables{% endblock %} {% block content
 %}
+<h2>Hosts</h2>
+{% block hosts %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>mac address</th>
+        <th>ip address</th>
+        <th>Active</th>
+     
+      </tr>
+    </thead>
+    <tbody>
+      {% for host in nodeDetailsList %}
+        <tr>
+          <td>{{ host[0] }}</td>
+          <td>{{ host[1] }}</td>
+          <td>{{ host[2] }}</td>
+          <td>{{ host[3] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+<br/>
+<h2>Switches</h2>
+{% block Switches %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>switch</th>
+        <th>flow id</th>
+        <th>active flows</th>
+        <th>packets-looked-up</th>
+        <th>packets-matched</th>
+     
+      </tr>
+    </thead>
+    <tbody>
+      {% for host in switchData %}
+        <tr>
+          <td>{{ host[0] }}</td>
+          <td>{{ host[1] }}</td>
+          <td>{{ host[2] }}</td>
+          <td>{{ host[3] }}</td>
+          <td>{{ host[4] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+<br/>
+<h2>Flow tabls</h2>
 {% block flow_table %}
   <table id="data" class="table table-striped">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Address</th>
-        <th>Phone Number</th>
-        <th>Email</th>
+        <th>switch</th>
+        <th>flow id</th>
+        <th>priority</th>
+        <th>instructions</th>
+      
+     
       </tr>
     </thead>
     <tbody>
-      <!-- {% for user in users %}
-        <tr>
-          <td>{{ user.name }}</td>
-          <td>{{ user.age }}</td>
-          <td>{{ user.address }}</td>
-          <td>{{ user.phone }}</td>
-          <td>{{ user.email }}</td>
-        </tr>
-      {% endfor %} -->
+      {% for host in switchData %}
+        {% for flow in host[5] %}
+          <tr>
+            <td>{{ host[0] }}</td>
+            <td>{{ flow.id }}</td>
+            <td>{{ flow.priority }}</td>
+            <td>{{ flow.instructions }}</td>
+          </tr>
+        {% endfor %}
+      {% endfor %}
     </tbody>
   </table>
 {% endblock %}
+
+
 {% endblock %}

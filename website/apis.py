@@ -34,16 +34,18 @@ def flow_table():
         for switch in range(0,nodesCount):
             for i in data2["nodes"]["node"][switch]["flow-node-inventory:table"]:
                 if i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"] != 0:
-                    switchData.append([data2["nodes"]["node"][switch]["id"],i["id"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-looked-up"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-matched"]])
-    print(nodeDetailsList,switchData)
-    return render_template("flow_table.html", user=current_user)
+                    flows = []
+                    for f in i["flow"]:
+                        flows.append({'id' : f["id"], 'priority': f.get("priority",None),'instructions' :  f.get("instructions",None)})
+                        
+                    switchData.append([data2["nodes"]["node"][switch]["id"],i["id"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-looked-up"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-matched"], flows])
+   
+    return render_template("flow_table.html", user=current_user, nodeDetailsList=nodeDetailsList, switchData=switchData)
 @apis.route('/test')
-def testAPI():
-    return "This is a test API."
 
 
 @apis.route('/block', methods=['GET', 'POST'])
-def login():
+def block():
     if request.method == 'POST':
         ip = request.form.get('ip')  # "10.0.0.4/32"
         switch = request.form.get('switch')  # "openflow:1"
