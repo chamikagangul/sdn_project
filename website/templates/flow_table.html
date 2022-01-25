@@ -2,7 +2,7 @@
 %}
 <h2>Hosts</h2>
 {% block hosts %}
-  <table id="data" class="table table-striped">
+  <table id="host_table" class="table table-striped">
     <thead>
       <tr>
         <th>#</th>
@@ -25,9 +25,10 @@
   </table>
 {% endblock %}
 <br/>
+
 <h2>Switches</h2>
 {% block Switches %}
-  <table id="data" class="table table-striped">
+  <table id="switch_table" class="table table-striped">
     <thead>
       <tr>
         <th>switch</th>
@@ -56,7 +57,7 @@
 <br/>
 <h2>Flow tabls</h2>
 {% block flow_table %}
-  <table id="data" class="table table-striped">
+  <table id="flow_table" class="table table-striped">
     <thead>
       <tr>
         <th>switch</th>
