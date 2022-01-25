@@ -9,13 +9,43 @@ from requests.auth import HTTPBasicAuth
 apis = Blueprint('apis', __name__)
 
 
+@apis.route('/flow_table')
+def flow_table():
+    url="http://10.15.3.12:8181/restconf/operational/network-topology:network-topology"
+    response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
+    data=response.json()
+    nodesCount = 0
+    nodeDetailsList=[]
+    if data and "node" in data["network-topology"]["topology"][2]:
+        nodesCount = len(data["network-topology"]["topology"][2]["node"])
+        
+    count=1
+    for nodeC in range(0,nodesCount):
+        if "host" in data["network-topology"]["topology"][2]["node"][nodeC]["node-id"]:
+            nodeDetailsList.append([count,data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['mac'],data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'],data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:attachment-points'][0]['active']])
+            count=count+1
+
+    url="http://10.15.3.12:8181/restconf/operational/opendaylight-inventory:nodes"
+    response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
+    data2=response.json()
+    if data2:
+        switchData=[]
+        nodesCount = len(data2["nodes"]["node"])
+        for switch in range(0,nodesCount):
+            for i in data2["nodes"]["node"][switch]["flow-node-inventory:table"]:
+                if i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"] != 0:
+                    flows = []
+                    for f in i["flow"]:
+                        flows.append({'id' : f["id"], 'priority': f.get("priority",None),'instructions' :  f.get("instructions",None)})
+                        
+                    switchData.append([data2["nodes"]["node"][switch]["id"],i["id"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-looked-up"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-matched"], flows])
+   
+    return render_template("flow_table.html", user=current_user, nodeDetailsList=nodeDetailsList, switchData=switchData)
 @apis.route('/test')
-def testAPI():
-    return "This is a test API."
 
 
 @apis.route('/block', methods=['GET', 'POST'])
-def login():
+def block():
     if request.method == 'POST':
         ip = request.form.get('ip')  # "10.0.0.4/32"
         switch = request.form.get('switch')  # "openflow:1"
