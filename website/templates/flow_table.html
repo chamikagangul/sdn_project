@@ -9,7 +9,7 @@
         <th>mac address</th>
         <th>ip address</th>
         <th>Active</th>
-     
+        <th>action</th>
       </tr>
     </thead>
     <tbody>
@@ -19,6 +19,10 @@
           <td>{{ host[1] }}</td>
           <td>{{ host[2] }}</td>
           <td>{{ host[3] }}</td>
+          <td> 
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#host_modal" onclick="blockHost('{{  host[2]  }}')">
+            <span class="glyphicon glyphicon-edit">Block</span>
+           </td>
         </tr>
       {% endfor %}
     </tbody>
@@ -36,7 +40,7 @@
         <th>active flows</th>
         <th>packets-looked-up</th>
         <th>packets-matched</th>
-     
+       
       </tr>
     </thead>
     <tbody>
@@ -47,6 +51,7 @@
           <td>{{ host[2] }}</td>
           <td>{{ host[3] }}</td>
           <td>{{ host[4] }}</td>
+        
         </tr>
       {% endfor %}
     </tbody>
