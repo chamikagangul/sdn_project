@@ -13,7 +13,7 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-
+        print(request.form)
         user = User.query.filter_by(email=email).first()
         
         if user:
