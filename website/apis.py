@@ -5,6 +5,7 @@ from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import requests
 from requests.auth import HTTPBasicAuth
+import json
 
 apis = Blueprint('apis', __name__)
 
@@ -44,10 +45,16 @@ def flow_table():
 @apis.route('/test')
 
 
-@apis.route('/block', methods=['GET', 'POST'])
+# @apis.route('/block', methods=['GET', 'POST'])
+# @login_required
 def block():
     if request.method == 'POST':
-        ip = request.form.get('ip')  # "10.0.0.4/32"
+        requestData = json.loads(request.data)
+
+        ip =  requestData.get('ip') if requestData else request.form.get('ip')  # "10.0.0.4/32"
+
+        print(ip)
+
         switch = request.form.get('switch')  # "openflow:1"
         url = "http://10.15.3.12:8181/restconf/operations/sal-flow:add-flow"
         dataXml = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -87,5 +94,5 @@ def block():
             db.session.commit()
         else:
             flash('Blocking failed!', category='error')
-
-    return render_template("home.html", user=current_user)
+    return ""
+    # return render_template("home.html", user=current_user)

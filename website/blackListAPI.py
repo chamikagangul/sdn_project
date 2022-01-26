@@ -15,7 +15,11 @@ blackListAPI = Blueprint('blackListAPI', __name__)
 @login_required
 def block():
     if request.method == 'POST':
-        ip = request.form.get('ip')  # "10.0.0.4/32"
+        requestData = json.loads(request.data)
+
+        ip =  requestData.get('ip') if requestData else request.form.get('ip')  # "10.0.0.4/32"
+
+        print(ip)
         # switch = request.form.get('switch')  # "openflow:1"
 
         url = "http://10.15.3.12:8181/restconf/operations/sal-flow:add-flow"
@@ -56,7 +60,7 @@ def block():
         json_copy = json.loads(data)
         switches  = [1,2,3,4,5,6,7] #need to get from OpenDaylight
         for switch in switches:
-            json_copy['input']["match"]["ipv4-destination"] = str(ip)
+            json_copy['input']["match"]["ipv4-destination"] = str(ip) + "/32"
             json_copy['input']["node"]= "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:"+ str(switch) +"']"
             dump = json.dumps(json_copy)
             response = requests.post(url, auth=HTTPBasicAuth('admin', 'admin'), data=dump, headers=headers)
@@ -70,5 +74,5 @@ def block():
                 flash('Blocking failed!', category='error')
         else:
              flash('Blocking success!', category='success')
-
-    return render_template("block.html", user=current_user, switches=["openflow:1", "openflow:2", "openflow:3"])
+    return "<h1>Block</h1>"
+    # return render_template("block.html", user=current_user, switches=["openflow:1", "openflow:2", "openflow:3"])

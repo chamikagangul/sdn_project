@@ -25,7 +25,7 @@ def create_app():
     app.register_blueprint(blackListAPI, url_prefix='/blacklist')
    
 
-    from .models import User, Note
+    from .models import User
 
     create_database(app)
 

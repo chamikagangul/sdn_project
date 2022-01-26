@@ -8,5 +8,10 @@ function deleteNote(noteId) {
 }
 
 function blockHost(ip){
-  alert(ip)
+  fetch("/blacklist/block", {
+    method: "POST",
+    body: JSON.stringify({ ip: ip }),
+  }).then((_res) => {
+    alert("Host blocked");
+  });
 }
