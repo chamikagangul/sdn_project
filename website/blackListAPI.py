@@ -8,9 +8,14 @@ from . import db
 from flask_login import current_user, login_required
 import requests
 from requests.auth import HTTPBasicAuth
+import concurrent.futures
 
 blackListAPI = Blueprint('blackListAPI', __name__)
 
+def load_url(url,dump,switchId,timeout):
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(url, auth=HTTPBasicAuth('admin', 'admin'), data=dump, headers=headers, timeout=timeout)
+    return response,switchId
 
 @blackListAPI.route('/block', methods=['GET', 'POST'])
 # @login_required
@@ -59,19 +64,40 @@ def block():
         json_copy = json.loads(data)
         switches = [1, 2, 3, 4, 5, 6, 7]  # need to get from OpenDaylight
 
-        for switch in switches:
-            json_copy['input']["match"]["ipv4-destination"] = str(ip) + "/32"
-            json_copy['input']["node"] = "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:" + \
-                str(switch) + "']"
-            dump = json.dumps(json_copy)
-            response = requests.post(url, auth=HTTPBasicAuth(
-                'admin', 'admin'), data=dump, headers=headers)
-            if response.status_code != 200:
+        blocksuccess = True
 
-                flash('Blocking failed!', category='error')
-            else:
-                print(f"Blocking success in switch openflow:{switch}")
-        else:
+
+        future_to_url  = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=500) as executor:
+            for switch in switches:
+                json_copy['input']["match"]["ipv4-destination"] = str(ip) + "/32"
+                json_copy['input']["node"] = "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:" + \
+                    str(switch) + "']"
+                dump = json.dumps(json_copy)
+                future_to_url.append(executor.submit(load_url, url, dump,switch, 5))
+
+                # response = requests.post(url, auth=HTTPBasicAuth(
+                #     'admin', 'admin'), data=dump, headers=headers)
+                    
+                # if response.status_code != 200:
+                #     blocksuccess = False
+                #     flash('Blocking failed!', category='error')
+                # else:
+                #     print(f"Blocking success in switch openflow:{switch}")
+            for future in concurrent.futures.as_completed(future_to_url):
+                try:
+                    response, switchId= future.result()
+                    if response.status_code != 200:
+                        blocksuccess = False
+                        flash('Blocking failed!', category='error')
+                    else:
+                        print(f"Blocking success in switch openflow:{switchId}")
+                except Exception as exc:
+                    blocksuccess = False
+                    data = str(type(exc))
+                # finally:
+                #     print(f"requst completed with : {response.status_code}")
+        if blocksuccess:
             new_black_ip = BlackIp(ip=ip, user_id=current_user.id)
             db.session.add(new_black_ip)
             db.session.commit()
@@ -115,20 +141,36 @@ def unblock():
         json_copy = json.loads(data)
         switches = [1, 2, 3, 4, 5, 6, 7]  # need to get from OpenDaylight
 
-        for switch in switches:
-            json_copy['input']["match"]["ipv4-destination"] = str(ip) + "/32"
-            json_copy['input']["node"] = "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:" + \
-                str(switch) + "']"
-            dump = json.dumps(json_copy)
-            response = requests.post(url, auth=HTTPBasicAuth(
-                'admin', 'admin'), data=dump, headers=headers)
-            if response.status_code != 200:
-                flash('unblocking failed!', category='error')
-            else:
-                print(f"Unblocking success in switch openflow:{switch}")
-        else:
-            # remove ip from database
-            db.session.query(BlackIp).filter(BlackIp.ip == ip).delete()
-            db.session.commit()
-            flash('unblocking success!', category='success')
+        future_to_url  = []
+        unblockSuccess = True
+        with concurrent.futures.ThreadPoolExecutor(max_workers=500) as executor:
+            for switch in switches:
+                json_copy['input']["match"]["ipv4-destination"] = str(ip) + "/32"
+                json_copy['input']["node"] = "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:" + \
+                    str(switch) + "']"
+                dump = json.dumps(json_copy)
+
+                future_to_url.append(executor.submit(load_url, url, dump,switch, 5))
+                
+                # if response.status_code != 200:
+                #     flash('unblocking failed!', category='error')
+                # else:
+                #     print(f"Unblocking success in switch openflow:{switch}")
+            for future in concurrent.futures.as_completed(future_to_url):
+                try:
+                    response, switchId= future.result()
+                    if response.status_code != 200:
+                        unblockSuccess = False
+                        flash('Unblocking failed!', category='error')
+                    else:
+                        print(f"Unblocking success in switch openflow:{switchId}")
+                except Exception as exc:
+                    unblockSuccess = False
+                    data = str(type(exc))
+
+            if unblockSuccess:
+                # remove ip from database
+                db.session.query(BlackIp).filter(BlackIp.ip == ip).delete()
+                db.session.commit()
+                flash('unblocking success!', category='success')
     return "<h1>Unblocked</h1>"

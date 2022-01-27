@@ -19,9 +19,14 @@
           <td>{{ host[1] }}</td>
           <td>{{ host[2] }}</td>
           <td>{{ host[3] }}</td>
-          <td> 
+          <td>
+            {% if host[4] %}
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#host_modal" onclick="unblockHost('{{  host[2]  }}')">
+            <span class="glyphicon glyphicon-edit">Unblock</span>
+            {% else %}
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#host_modal" onclick="blockHost('{{  host[2]  }}')">
             <span class="glyphicon glyphicon-edit">Block</span>
+            {% endif %}
            </td>
         </tr>
       {% endfor %}
