@@ -20,7 +20,7 @@ def create_app():
     from .blackListAPI import blackListAPI
 
     
-    app.register_blueprint(views, url_prefix='/')
+    # app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(apis, url_prefix='/')
     app.register_blueprint(flow_table, url_prefix='/')

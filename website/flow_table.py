@@ -52,6 +52,7 @@ def createSwitchData():
     return switchData
 
 @flow_table.route('/')
+@login_required
 def get():
     nodeDetailsList = createnodeDetailList()
     switchData = createSwitchData()

@@ -1,15 +1,17 @@
 {% extends "base.html" %} {% block title %}Flow tables{% endblock %} {% block content
 %}
+<div style="width: 100%; text-align: center; margin: 20px;">
 <h2>Hosts</h2>
+</div>
 {% block hosts %}
   <table id="host_table" class="table table-striped">
     <thead>
       <tr>
         <th>#</th>
-        <th>mac address</th>
-        <th>ip address</th>
+        <th>MAC Address</th>
+        <th>IP Address</th>
         <th>Active</th>
-        <th>action</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -21,10 +23,10 @@
           <td>{{ host[3] }}</td>
           <td>
             {% if host[4] %}
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#host_modal" onclick="unblockHost('{{  host[2]  }}')">
+            <button type="button" class="btn btn-primary" style="background-color: rgb(111, 207, 116); width: 100px;" data-toggle="modal" data-target="#host_modal" onclick="unblockHost('{{  host[2]  }}')">
             <span class="glyphicon glyphicon-edit">Unblock</span>
             {% else %}
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#host_modal" onclick="blockHost('{{  host[2]  }}')">
+            <button type="button" class="btn btn-primary" style="background-color: rgb(207, 111, 111); width: 100px;" data-toggle="modal" data-target="#host_modal" onclick="blockHost('{{  host[2]  }}')">
             <span class="glyphicon glyphicon-edit">Block</span>
             {% endif %}
            </td>
@@ -34,17 +36,18 @@
   </table>
 {% endblock %}
 <br/>
-
+<div style="width: 100%; text-align: center; margin: 20px;">
 <h2>Switches</h2>
+</div>
 {% block Switches %}
   <table id="switch_table" class="table table-striped">
     <thead>
       <tr>
-        <th>switch</th>
-        <th>flow id</th>
-        <th>active flows</th>
-        <th>packets-looked-up</th>
-        <th>packets-matched</th>
+        <th>Switch</th>
+        <th>Flow ID</th>
+        <th>Active Flows</th>
+        <th>Packets-Looked-Up</th>
+        <th>Packets-Matched</th>
        
       </tr>
     </thead>
@@ -65,7 +68,7 @@
 
 
 <br/>
-<h2>Flow tabls</h2>
+<!-- <h2>Flow tabls</h2>
 {% block flow_table %}
   <table id="flow_table" class="table table-striped">
     <thead>
@@ -91,7 +94,7 @@
       {% endfor %}
     </tbody>
   </table>
-{% endblock %}
+{% endblock %} -->
 
 
 {% endblock %}
