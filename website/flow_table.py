@@ -32,30 +32,30 @@ def createnodeDetailList():
     data=response.json()
     nodesCount = 0
     nodeDetailsList=[]
-    if data and "node" in data["network-topology"]["topology"][2]:
-        nodesCount = len(data["network-topology"]["topology"][2]["node"])
+    if data and "node" in data["network-topology"]["topology"][0]:
+        nodesCount = len(data["network-topology"]["topology"][0]["node"])
     
     count=1
     blockedIps = getBlockedIps()
     rateLimits = getRateLimits()
 
     for nodeC in range(0,nodesCount):
-        if "host" in data["network-topology"]["topology"][2]["node"][nodeC]["node-id"]:
+        if "host" in data["network-topology"]["topology"][0]["node"][nodeC]["node-id"]:
 
-            isBlocked = data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] in blockedIps
+            isBlocked = data["network-topology"]["topology"][0]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] in blockedIps
 
             hostLimit = -1
             for node in rateLimits:
-                if data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] == node["ip"]:
+                if data["network-topology"]["topology"][0]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] == node["ip"]:
                     hostLimit = node["rate"]
             
 
 
             nodeDetailsList.append([
                 count,
-                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['mac'],
-                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'],
-                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:attachment-points'][0]['active'],
+                data["network-topology"]["topology"][0]["node"][nodeC]['host-tracker-service:addresses'][0]['mac'],
+                data["network-topology"]["topology"][0]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'],
+                data["network-topology"]["topology"][0]["node"][nodeC]['host-tracker-service:attachment-points'][0]['active'],
                 isBlocked,
                 hostLimit 
                 ])
