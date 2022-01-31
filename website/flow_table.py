@@ -1,13 +1,9 @@
-import re
-from flask import Blueprint, render_template, request, flash, redirect, url_for
-from sqlalchemy import false
-from .models import BlackIp, RateIp, User
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Blueprint, render_template
+from .models import BlackIp, RateIp
 from . import db
-from flask_login import login_user, login_required, logout_user, current_user
+from flask_login import login_required,  current_user
 import requests
 from requests.auth import HTTPBasicAuth
-import json
 from constant import BASE_IP
 
 
@@ -83,6 +79,7 @@ def createSwitchData():
 @login_required
 def get():
     nodeDetailsList = createnodeDetailList()
-    switchData = createSwitchData()
-    return render_template("flow_table.html", user=current_user, nodeDetailsList=nodeDetailsList, switchData=switchData)
+    # switchData = createSwitchData()
+    return render_template("flow_table.html", user=current_user, nodeDetailsList=nodeDetailsList)
+
 

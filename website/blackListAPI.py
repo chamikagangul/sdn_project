@@ -1,8 +1,5 @@
-from dbm import dumb
 import json
-from typing import Dict
-from flask import Blueprint, render_template, request, flash
-from sqlalchemy import true
+from flask import Blueprint, request, flash
 from .models import BlackIp
 from . import db
 from flask_login import current_user, login_required

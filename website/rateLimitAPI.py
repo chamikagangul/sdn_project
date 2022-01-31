@@ -1,14 +1,11 @@
-from dbm import dumb
 import json
-from typing import Dict
 from flask import Blueprint, redirect, render_template, request, flash, url_for
-from sqlalchemy import true
 from .models import RateIp
 from . import db
 from flask_login import current_user, login_required
 import requests
 from requests.auth import HTTPBasicAuth
-import concurrent.futures
+# import concurrent.futures
 from constant import BASE_IP
 rateLimitAPI = Blueprint('rateLimitAPI', __name__)
 

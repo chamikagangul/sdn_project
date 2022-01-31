@@ -1,26 +1,48 @@
 {% extends "base.html" %} {% block title %}Rate Limiter{% endblock %} {% block content%}
-<form method="POST">
+<form method="POST" 
+style="
+border: solid; 
+border-width: 1px; 
+border-radius: 2px; 
+border-color: rgb(109, 107, 107);
+padding: 10px;
+margin: 10px;
+box-shadow: 4px 0 2px -2px rgba(0,0,0,0.4);"
+>
+  <br/>
   <h3 align="center">Rate Limit For {{ip}}</h3>
-  <div class="form-group">
-    <label for="rate">Rate Limit in KB/s</label>
+  <div class="form-group" style="display: flex;">
+    <label for="rate">Enter Rate Limit in KB/s</label>
     <input
       type="number"
       class="form-control"
       id="rate"
       name="rate"
-      placeholder="100000"
       required
-      min="10000"
+      min="1000"
     />
   </div>
-  <br />
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <div style="width: 100%; text-align: center; margin: 20px;">
+  <button type="submit" class="btn btn-primary" style="background-color: #ba2d65;">Submit</button>
+  </div>
 </form>
 
 {% if limited == "true" %}
-<br/>
-  <button type="button" class="btn btn-primary" style="background-color: rgb(207, 111, 111); width: 100px;" data-toggle="modal" data-target="#host_modal" onclick="rateReset('{{  ip  }}')">
-    <span class="glyphicon glyphicon-edit">Remove Limit</span>
+<div 
+style="
+border: solid; 
+border-width: 1px; 
+border-radius: 2px; 
+border-color: rgb(109, 107, 107);
+padding: 10px;
+margin: 10px;
+box-shadow: 4px 0 2px -2px rgba(0,0,0,0.4);"
+>
+  <label for="btn">Remove Rate Limitation of The Host</label>
+ <button id = "btn" type="button" class="btn btn-primary" style="background-color: #7cb342;" data-toggle="modal" data-target="#host_modal" onclick="rateReset('{{  ip  }}')">
+  <span class="glyphicon glyphicon-edit">Remove Limit</span>
+</div>
+ 
 {% endif %}
 
 {% endblock %}

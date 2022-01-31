@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}Flow tables{% endblock %} {% block content
+%}
+<div style="width: 100%; text-align: center; margin: 20px;">
+<h2>Switches</h2>
+</div>
+{% block Switches %}
+  <table id="switch_table" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Switch</th>
+        <th>Flow ID</th>
+        <th>Active Flows</th>
+        <th>Packets-Looked-Up</th>
+        <th>Packets-Matched</th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      {% for host in switchData %}
+        <tr>
+          <td>{{ host[0] }}</td>
+          <td>{{ host[1] }}</td>
+          <td>{{ host[2] }}</td>
+          <td>{{ host[3] }}</td>
+          <td>{{ host[4] }}</td>
+        
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+<br/>
+
+{% endblock %}
