@@ -125,6 +125,8 @@ def reduce():
         dump2_temp = json.loads(data2)
         dump2_temp['flow-node-inventory:flow'][0]["match"]["ipv4-destination"] = str(ip) + "/32"
         dump2_temp['flow-node-inventory:flow'][0]["instructions"]["instruction"][1]["apply-actions"]["action"][0]["output-action"]["output-node-connector"] = node_connector
+        dump2_temp['flow-node-inventory:flow'][0]["instructions"]["instruction"][0]["meter"]["meter-id"] = node_connector
+
 
         dump2_temp["flow-node-inventory:flow"][0]["id"] = "L2_Rule_h_to_h" + ip
         dump2_temp["flow-node-inventory:flow"][0]["flow-name"] = "L2_Rule_h_to_h" + ip
@@ -134,11 +136,18 @@ def reduce():
 
         print(f"entry response code : {response2.status_code}")
 
-        if response2.status_code == 201 or response2.status_code == 200:
+        if response1.status_code == 201:
             flash('rate limiting success!', category='success')
             print(f"Added flow entry to switch openflow: {switchID}")
             new_rate_ip = RateIp(ip=ip, rateLimit = 100000, user_id=current_user.id)
             db.session.add(new_rate_ip)
+            db.session.commit()
+        elif response1.status_code == 200:
+            flash('rate limiting success!', category='success')
+            print(f"Updated flow entry to switch openflow: {switchID}")
+            RateIp.query.filter_by(ip=ip).update(dict(rateLimit=90000))
+            # new_rate_ip = RateIp(ip=ip, rateLimit = 100000, user_id=current_user.id)
+            # db.session.update(new_rate_ip)
             db.session.commit()
         else:
             flash('cannot limit the rate!', category='error')
