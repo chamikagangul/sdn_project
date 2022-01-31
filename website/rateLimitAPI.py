@@ -39,7 +39,7 @@ def reduce():
         ip = requestData.get('ip') if requestData else request.form.get(
             'ip')  # "10.0.0.4/32"
         node_connector, switchID = findSwitch(ip)
-        url1 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/meter/1"
+        url1 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/meter/" + str(node_connector)
         # url1 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:3/meter/1"
         data1 = """{"flow-node-inventory:meter": [
                 {
@@ -63,12 +63,13 @@ def reduce():
         }"""
 
         dump1_temp = json.loads(data1)
+        dump1_temp["flow-node-inventory:meter"][0]["meter-id"] = node_connector
         dump1 = json.dumps(dump1_temp)
         response1 = load_url(url1, dump1, 5)
         print(f"meter response code : {response1.status_code}")
         print(f"Added meter to switch openflow: {switchID}")
 
-        url2 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/table/0/flow/L2_Rule_h_to_h" + ip[-1]
+        url2 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/table/0/flow/L2_Rule_h_to_h" + ip
 
         data2 = """{
             "flow-node-inventory:flow": [
@@ -121,8 +122,8 @@ def reduce():
         dump2_temp['flow-node-inventory:flow'][0]["match"]["ipv4-destination"] = str(ip) + "/32"
         dump2_temp['flow-node-inventory:flow'][0]["instructions"]["instruction"][1]["apply-actions"]["action"][0]["output-action"]["output-node-connector"] = node_connector
 
-        dump2_temp["flow-node-inventory:flow"][0]["id"] = "L2_Rule_h_to_h" + ip[-1]
-        dump2_temp["flow-node-inventory:flow"][0]["flow-name"] = "L2_Rule_h_to_h" + ip[-1]
+        dump2_temp["flow-node-inventory:flow"][0]["id"] = "L2_Rule_h_to_h" + ip
+        dump2_temp["flow-node-inventory:flow"][0]["flow-name"] = "L2_Rule_h_to_h" + ip
 
         dump2 = json.dumps(dump2_temp)
         response2 = load_url(url2, dump2, 5)
