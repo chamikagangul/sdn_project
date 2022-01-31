@@ -1,4 +1,7 @@
 {% extends "base.html" %} {% block title %}Rate Limiter{% endblock %} {% block content%}
+<div style="width: 100%; text-align: center; margin: 20px;">
+  <h2>Rate Limiter</h2>
+  </div>
 <form method="POST" 
 style="
 border: solid; 
@@ -10,7 +13,7 @@ margin: 10px;
 box-shadow: 4px 0 2px -2px rgba(0,0,0,0.4);"
 >
   <br/>
-  <h3 align="center">Rate Limit For {{ip}}</h3>
+  <h3 align="center">IP : {{ip}}</h3>
   <div class="form-group" style="display: flex;">
     <label for="rate">Enter Rate Limit in KB/s</label>
     <input

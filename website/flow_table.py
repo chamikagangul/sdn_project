@@ -58,22 +58,22 @@ def createnodeDetailList():
             count=count+1
     return nodeDetailsList
 
-def createSwitchData():
-    url=f"http://{BASE_IP}:8181/restconf/operational/opendaylight-inventory:nodes"
-    response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
-    data2=response.json()
-    if data2:
-        switchData=[]
-        nodesCount = len(data2["nodes"]["node"])
-        for switch in range(0,nodesCount):
-            for i in data2["nodes"]["node"][switch]["flow-node-inventory:table"]:
-                if i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"] != 0:
-                    flows = []
-                    for f in i["flow"]:
-                        flows.append({'id' : f["id"], 'priority': f.get("priority",None),'instructions' :  f.get("instructions",None)})
+# def createSwitchData():
+#     url=f"http://{BASE_IP}:8181/restconf/operational/opendaylight-inventory:nodes"
+#     response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
+#     data2=response.json()
+#     if data2:
+#         switchData=[]
+#         nodesCount = len(data2["nodes"]["node"])
+#         for switch in range(0,nodesCount):
+#             for i in data2["nodes"]["node"][switch]["flow-node-inventory:table"]:
+#                 if i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"] != 0:
+#                     flows = []
+#                     for f in i["flow"]:
+#                         flows.append({'id' : f["id"], 'priority': f.get("priority",None),'instructions' :  f.get("instructions",None)})
                         
-                    switchData.append([data2["nodes"]["node"][switch]["id"],i["id"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-looked-up"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-matched"], flows])
-    return switchData
+#                     switchData.append([data2["nodes"]["node"][switch]["id"],i["id"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-looked-up"],i["opendaylight-flow-table-statistics:flow-table-statistics"]["packets-matched"], flows])
+#     return switchData
 
 @flow_table.route('/')
 @login_required
