@@ -8,6 +8,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+from constant import BASE_IP
+
 
 flow_table = Blueprint('flow_table', __name__)
 
@@ -25,7 +27,7 @@ def getRateLimits():
 
 
 def createnodeDetailList():
-    url="http://10.15.3.12:8181/restconf/operational/network-topology:network-topology"
+    url=f"http://{BASE_IP}:8181/restconf/operational/network-topology:network-topology"
     response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
     data=response.json()
     nodesCount = 0
@@ -61,7 +63,7 @@ def createnodeDetailList():
     return nodeDetailsList
 
 def createSwitchData():
-    url="http://10.15.3.12:8181/restconf/operational/opendaylight-inventory:nodes"
+    url=f"http://{BASE_IP}:8181/restconf/operational/opendaylight-inventory:nodes"
     response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
     data2=response.json()
     if data2:

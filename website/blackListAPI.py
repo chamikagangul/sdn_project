@@ -9,6 +9,9 @@ from flask_login import current_user, login_required
 import requests
 from requests.auth import HTTPBasicAuth
 import concurrent.futures
+from constant import BASE_IP
+
+blackListAPI = Blueprint('blackListAPI', __name__)
 
 blackListAPI = Blueprint('blackListAPI', __name__)
 
@@ -18,7 +21,7 @@ def load_url(url,dump,switchId,timeout):
     return response,switchId
 
 @blackListAPI.route('/block', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def block():
     if request.method == 'POST':
         requestData = json.loads(request.data)
@@ -26,7 +29,7 @@ def block():
         ip = requestData.get('ip') if requestData else request.form.get(
             'ip')  # "10.0.0.4/32"
 
-        url = "http://10.15.3.12:8181/restconf/operations/sal-flow:add-flow"
+        url = f"http://{BASE_IP}:8181/restconf/operations/sal-flow:add-flow"
         data = """{
                     "input": {
                         "node": "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:1']",
@@ -106,7 +109,7 @@ def block():
 
 
 @blackListAPI.route('/unblock', methods=['GET', 'POST'])
-# @login_required
+@login_required
 def unblock():
     if request.method == 'POST':
         requestData = json.loads(request.data)
@@ -117,7 +120,7 @@ def unblock():
         print(ip)
         # switch = request.form.get('switch')  # "openflow:1"
 
-        url = "http://10.15.3.12:8181/restconf/operations/sal-flow:remove-flow"
+        url = f"http://{BASE_IP}:8181/restconf/operations/sal-flow:remove-flow"
         data = """{
      "input": {
          "node": "/opendaylight-inventory:nodes/opendaylight-inventory:node[opendaylight-inventory:id='openflow:1']",

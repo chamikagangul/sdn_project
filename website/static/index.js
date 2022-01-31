@@ -19,14 +19,16 @@ function unblockHost(ip) {
 }
 
 
-function rateLimit(ip) {
-  fetch("/ratelimit/reduce", {
-    method: "POST",
-    body: JSON.stringify({ ip: ip }),
-  }).then((_res) => {
-    // alert("Host " + ip + " unblocked");
-    location.reload();
-  });
+function rateLimit(ip, limited) {
+  
+  location.href = "/ratelimit/reduce/?ip=" + ip+"&isLimited="+limited;
+  // fetch("/ratelimit/reduce", {
+  //   method: "POST",
+  //   body: JSON.stringify({ ip: ip }),
+  // }).then((_res) => {
+  //   // alert("Host " + ip + " unblocked");
+  //   location.reload();
+  // });
 }
 
 function rateReset(ip) {
@@ -35,6 +37,6 @@ function rateReset(ip) {
     body: JSON.stringify({ ip: ip }),
   }).then((_res) => {
     // alert("Host " + ip + " unblocked");
-    location.reload();
+    location.href = "/";
   });
 }

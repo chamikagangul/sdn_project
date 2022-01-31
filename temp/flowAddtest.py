@@ -2,11 +2,12 @@ import requests
 import urllib3
 import configparser
 from requests.auth import HTTPBasicAuth
+from constant import BASE_IP
 
 # url="http://10.15.3.10:8181/restconf/operational/network-topology:network-topology"
 # response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
 
-url = "http://10.15.3.12:8181/restconf/operations/sal-flow:add-flow"
+url = f"http://{BASE_IP}:8181/restconf/operations/sal-flow:add-flow"
 
 
 dataXml = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
