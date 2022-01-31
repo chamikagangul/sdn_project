@@ -1,7 +1,7 @@
 from dbm import dumb
 import json
 from typing import Dict
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, redirect, render_template, request, flash, url_for
 from sqlalchemy import true
 from .models import RateIp
 from . import db
@@ -23,21 +23,23 @@ def findSwitch(ip):
                 if "address-tracker:addresses" in node:
                     if node["address-tracker:addresses"][0]["ip"] == ip:
                         return node["flow-node-inventory:port-number"], data["nodes"]["node"][switch]["id"]
-
+    return None, None
     
 def load_url(url, dump, timeout):
     headers = {'Content-Type': 'application/json'}
     response = requests.put(url, auth=HTTPBasicAuth('admin', 'admin'), data=dump, headers=headers)
     return response
 
-@rateLimitAPI.route('/reduce', methods=['GET', 'POST'])
-# @login_required
+@rateLimitAPI.route('/reduce/', methods=['GET', 'POST'])
+@login_required
 def reduce():
     if request.method == 'POST':
-        requestData = json.loads(request.data)
+        # requestData = json.loads(request.data)
+        # ip =  request.form.get('ip')
+        ip = request.args.get('ip') #getting from params
+        rate =  request.form.get('rate') #getting from form
 
-        ip = requestData.get('ip') if requestData else request.form.get(
-            'ip')  # "10.0.0.4/32"
+        print("POST : ",ip,rate)
         node_connector, switchID = findSwitch(ip)
         url1 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/meter/" + str(node_connector)
         # url1 = "http://10.15.3.12:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:3/meter/1"
@@ -64,6 +66,8 @@ def reduce():
 
         dump1_temp = json.loads(data1)
         dump1_temp["flow-node-inventory:meter"][0]["meter-id"] = node_connector
+        dump1_temp["flow-node-inventory:meter"][0]["meter-band-headers"]["meter-band-header"][0]["drop-burst-size"] = str(rate)
+        dump1_temp["flow-node-inventory:meter"][0]["meter-band-headers"]["meter-band-header"][0]["drop-rate"] = str(rate)
         dump1 = json.dumps(dump1_temp)
         response1 = load_url(url1, dump1, 5)
         print(f"meter response code : {response1.status_code}")
@@ -138,8 +142,9 @@ def reduce():
             db.session.commit()
         else:
             flash('cannot limit the rate!', category='error')
-        return "<h1>rateLimited</h1>"
-
+        return redirect(url_for('flow_table.get'))
+    elif request.method == 'GET':
+        return render_template("rate_limit.html", user=current_user, ip = request.args.get('ip'))
 
 @rateLimitAPI.route('/reset', methods=['GET', 'POST'])
 # @login_required

@@ -1,14 +1,16 @@
 {% extends "base.html" %} {% block title %}Rate Limiter{% endblock %} {% block content%}
 <form method="POST">
-  <h3 align="center">Rate Limit For -IP-</h3>
+  <h3 align="center">Rate Limit For {{ip}}</h3>
   <div class="form-group">
-    <label for="email">Rate Limit in KB/s</label>
+    <label for="rate">Rate Limit in KB/s</label>
     <input
       type="number"
       class="form-control"
       id="rate"
       name="rate"
       placeholder="100000"
+      required
+      min="10000"
     />
   </div>
   <br />
