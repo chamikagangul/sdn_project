@@ -23,3 +23,10 @@ class BlackIp(db.Model):
     ip = db.Column(db.String(150))
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class RateIp(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(150))
+    rateLimit = db.Column(db.Integer)
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
