@@ -1,3 +1,4 @@
+import imp
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
@@ -18,6 +19,7 @@ def create_app():
     from .apis import apis
     from .flow_table import flow_table
     from .blackListAPI import blackListAPI
+    from .rateLimitAPI import rateLimitAPI
 
     
     # app.register_blueprint(views, url_prefix='/')
@@ -25,6 +27,7 @@ def create_app():
     app.register_blueprint(apis, url_prefix='/')
     app.register_blueprint(flow_table, url_prefix='/')
     app.register_blueprint(blackListAPI, url_prefix='/blacklist')
+    app.register_blueprint(rateLimitAPI, url_prefix='/ratelimit')
    
 
     from .models import User
