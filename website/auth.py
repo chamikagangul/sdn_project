@@ -53,8 +53,8 @@ def sign_up():
             flash('First name must be greater than 1 character.', category='error')
         elif password1 != password2:
             flash('Passwords don\'t match.', category='error')
-        elif len(password1) < 7:
-            flash('Password must be at least 7 characters.', category='error')
+        elif len(password1) < 5:
+            flash('Password must be at least 4 characters.', category='error')
         else:
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(
                 password1, method='sha256'))
@@ -62,6 +62,6 @@ def sign_up():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+            return redirect(url_for('flow_table.get'))
 
     return render_template("sign_up.html", user=current_user)
