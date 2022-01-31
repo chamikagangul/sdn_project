@@ -3,7 +3,7 @@ import json
 from typing import Dict
 from flask import Blueprint, render_template, request, flash
 from sqlalchemy import true
-from .models import BlackIp
+from .models import RateIp
 from . import db
 from flask_login import current_user, login_required
 import requests
@@ -133,6 +133,9 @@ def reduce():
         if response2.status_code == 201 or response2.status_code == 200:
             flash('rate limiting success!', category='success')
             print(f"Added flow entry to switch openflow: {switchID}")
+            new_rate_ip = RateIp(ip=ip, rateLimit = 100000, user_id=current_user.id)
+            db.session.add(new_rate_ip)
+            db.session.commit()
         else:
             flash('cannot limit the rate!', category='error')
         return "<h1>rateLimited</h1>"
