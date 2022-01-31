@@ -14,9 +14,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
     db.init_app(app)
 
-    from .views import views
     from .auth import auth
-    from .apis import apis
     from .flow_table import flow_table
     from .blackListAPI import blackListAPI
     from .rateLimitAPI import rateLimitAPI
@@ -24,7 +22,6 @@ def create_app():
     
     # app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
-    app.register_blueprint(apis, url_prefix='/')
     app.register_blueprint(flow_table, url_prefix='/')
     app.register_blueprint(blackListAPI, url_prefix='/blacklist')
     app.register_blueprint(rateLimitAPI, url_prefix='/ratelimit')

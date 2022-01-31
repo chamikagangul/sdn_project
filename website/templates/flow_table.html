@@ -32,8 +32,13 @@
             {% endif %}
            </td>
            <td>
-            <button type="button" class="btn btn-primary" style="background-color: rgb(111, 207, 116); width: 100px;" data-toggle="modal" data-target="#host_modal" onclick="rateLimit('{{  host[2]  }}')">
-            <span class="glyphicon glyphicon-edit">Limit Rate</span>            
+            {% if host[5] >= 0%}
+            <button type="button" class="btn btn-primary" style="background-color: rgb(111, 207, 116); width: 200px;" data-toggle="modal" data-target="#host_modal" onclick="rateLimit('{{  host[2] }}',true)">
+            <span class="glyphicon glyphicon-edit">Limited : {{host[5]}} </span>  
+            {% else %}  
+            <button type="button" class="btn btn-primary" style="background-color: rgb(207, 111, 111); width: 200px;" data-toggle="modal" data-target="#host_modal" onclick="rateLimit('{{  host[2] }}',false)">
+              <span class="glyphicon glyphicon-edit"> Limit </span>   
+              {% endif %}                 
            </td>
         </tr>
       {% endfor %}

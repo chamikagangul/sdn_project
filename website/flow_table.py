@@ -1,12 +1,15 @@
 import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import BlackIp, User
+from sqlalchemy import false
+from .models import BlackIp, RateIp, User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
 import requests
 from requests.auth import HTTPBasicAuth
 import json
+from constant import BASE_IP
+
 
 flow_table = Blueprint('flow_table', __name__)
 
@@ -16,26 +19,51 @@ def getBlockedIps():
         blockedIps.append(ip.ip)
     return blockedIps
 
+def getRateLimits():
+    rateLimits = []
+    for rate in RateIp.query.all():
+        rateLimits.append(dict(ip = rate.ip, rate = rate.rateLimit))
+    return rateLimits
+
+
 def createnodeDetailList():
-    url="http://10.15.3.12:8181/restconf/operational/network-topology:network-topology"
+    url=f"http://{BASE_IP}:8181/restconf/operational/network-topology:network-topology"
     response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
     data=response.json()
     nodesCount = 0
     nodeDetailsList=[]
     if data and "node" in data["network-topology"]["topology"][2]:
         nodesCount = len(data["network-topology"]["topology"][2]["node"])
-        
+    
     count=1
     blockedIps = getBlockedIps()
+    rateLimits = getRateLimits()
+
     for nodeC in range(0,nodesCount):
         if "host" in data["network-topology"]["topology"][2]["node"][nodeC]["node-id"]:
+
             isBlocked = data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] in blockedIps
-            nodeDetailsList.append([count,data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['mac'],data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'],data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:attachment-points'][0]['active'],isBlocked ])
+
+            hostLimit = -1
+            for node in rateLimits:
+                if data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'] == node["ip"]:
+                    hostLimit = node["rate"]
+            
+
+
+            nodeDetailsList.append([
+                count,
+                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['mac'],
+                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:addresses'][0]['ip'],
+                data["network-topology"]["topology"][2]["node"][nodeC]['host-tracker-service:attachment-points'][0]['active'],
+                isBlocked,
+                hostLimit 
+                ])
             count=count+1
     return nodeDetailsList
 
 def createSwitchData():
-    url="http://10.15.3.12:8181/restconf/operational/opendaylight-inventory:nodes"
+    url=f"http://{BASE_IP}:8181/restconf/operational/opendaylight-inventory:nodes"
     response = requests.get(url,auth=HTTPBasicAuth('admin', 'admin'))
     data2=response.json()
     if data2:
