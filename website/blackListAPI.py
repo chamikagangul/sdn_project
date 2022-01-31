@@ -75,7 +75,6 @@ def block():
                     str(switch) + "']"
                 dump = json.dumps(json_copy)
                 future_to_url.append(executor.submit(load_url, url, dump,switch, 5))
-
                 # response = requests.post(url, auth=HTTPBasicAuth(
                 #     'admin', 'admin'), data=dump, headers=headers)
                     
