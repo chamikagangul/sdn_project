@@ -4,3 +4,4 @@ python activate linux = source .env/bin/activate
 run flask app windows = python main.py
 run flask app linux = bash run
 install libs windows = pip install -r requirements.txt
+for mesure BW : iperf h1 h2
