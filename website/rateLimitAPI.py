@@ -36,6 +36,7 @@ def reduce():
         ip = request.args.get('ip') #getting from params
         rate =  request.form.get('rate') #getting from form
         isLimited = request.args.get('isLimited')
+        reset_edit(ip)
 
         print("POST : ",ip,rate)
         node_connector, switchID = findSwitch(ip)
@@ -170,8 +171,23 @@ def reset():
         if response.status_code == 200:
             db.session.query(RateIp).filter(RateIp.ip == ip).delete()
             db.session.commit()
-            flash('unblocking success!', category='success')
+            flash('reseting success!', category='success')
         print(f"meter response code : {response.status_code}")
         print(f"deleted meter to switch openflow: {switchID}")
     return "<h1>Success</h1>"
     # return render_template("block.html", user=current_user, switches=["openflow:1", "openflow:2", "openflow:3"])
+
+def reset_edit(ip):
+# requestData = json.loads(request.data)
+
+    node_connector, switchID = findSwitch(ip)
+    print(f"switchID: {switchID}")
+    print(f"node_connector: {node_connector}")
+    url = f"http://{BASE_IP}:8181/restconf/config/opendaylight-inventory:nodes/node/" + str(switchID) + "/meter/"+str(node_connector)
+    headers = {'Content-Type': 'application/json'}
+    response = requests.delete(url, auth=HTTPBasicAuth('admin', 'admin'), headers=headers)
+    if response.status_code == 200:
+        db.session.query(RateIp).filter(RateIp.ip == ip).delete()
+        db.session.commit()
+    print(f"meter response code : {response.status_code}")
+    print(f"deleted meter to switch openflow: {switchID}")

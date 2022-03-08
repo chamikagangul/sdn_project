@@ -12,7 +12,10 @@ def createSwitchData():
     data2=response.json()
     if data2:
         switchData=[]
-        nodesCount = len(data2["nodes"]["node"])
+        if "node" in data2["nodes"]:
+            nodesCount = len(data2["nodes"]["node"])
+        else:
+            nodesCount = 0
         for switch in range(0,nodesCount):
             for i in data2["nodes"]["node"][switch]["flow-node-inventory:table"]:
                 if i["opendaylight-flow-table-statistics:flow-table-statistics"]["active-flows"] != 0:
