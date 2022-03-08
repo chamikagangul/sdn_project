@@ -34,7 +34,7 @@
            <td>
             {% if host[5] >= 0%}
             <button type="button" class="btn btn-primary" style="background-color: #7cb342; width: 200px;" data-toggle="modal" data-target="#host_modal" onclick="rateLimit('{{  host[2] }}',true)">
-            <span class="glyphicon glyphicon-edit">Limited : {{host[5]}} </span>  
+            <span class="glyphicon glyphicon-edit">Limited : {{host[5]/1000}} Mbit/s </span>  
             {% else %}  
             <button type="button" class="btn btn-primary" style="background-color: #ba2d65; width: 200px;" data-toggle="modal" data-target="#host_modal" onclick="rateLimit('{{  host[2] }}',false)">
               <span class="glyphicon glyphicon-edit"> Limit </span>   

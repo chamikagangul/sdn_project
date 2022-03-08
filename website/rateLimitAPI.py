@@ -35,6 +35,7 @@ def reduce():
         # ip =  request.form.get('ip')
         ip = request.args.get('ip') #getting from params
         rate =  request.form.get('rate') #getting from form
+        rate = int(float(rate)*1000)
         isLimited = request.args.get('isLimited')
         reset_edit(ip)
 
